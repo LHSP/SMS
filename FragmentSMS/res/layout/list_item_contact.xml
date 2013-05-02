@@ -1,0 +1,54 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <QuickContactBadge
+        android:id="@+id/contactPhoto"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="5dp" />
+
+    <TextView
+        android:id="@+id/contactName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/contactPhoto"
+        android:layout_toRightOf="@+id/contactPhoto"
+        android:textStyle="bold"
+        android:paddingTop="6dp"
+        android:text="@string/Placeholder" />
+
+    <TextView
+        android:id="@+id/messageCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/contactPhoto"
+        android:paddingTop="6dp"
+        android:paddingRight="6dp"
+        android:text="@string/Placeholder" />
+
+    <TextView
+        android:id="@+id/lastMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/contactPhoto"
+        android:layout_alignLeft="@+id/contactName"
+        android:paddingBottom="6dp"
+        android:text="@string/Placeholder" />
+
+    <TextView
+        android:id="@+id/lastMessageTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/lastMessage"
+        android:layout_alignParentRight="true"
+        android:paddingBottom="6dp"
+        android:paddingRight="6dp"
+        android:text="@string/Placeholder" />
+
+</RelativeLayout>

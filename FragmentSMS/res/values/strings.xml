@@ -12,5 +12,6 @@
     <string name="Send">Enviar</string>
     <string name="ContactListHeader">Contatos</string>
     <string name="ContactPhoto">FotoContato</string>
+    <string name="Placeholder">Placeholder</string>
 
 </resources>

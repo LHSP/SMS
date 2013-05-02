@@ -95,7 +95,7 @@ public class Contacts implements LoaderCallbacks<Cursor>{
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
 		Bitmap contactPhoto;
-		TextView textView = (TextView) activity.findViewById(R.id.TextView);//new TextView(activity);
+		TextView textView = (TextView) activity.findViewById(R.id.textMessage);//new TextView(activity);
 		if (cursor != null && cursor.getCount() > 0) {
 			cursor.moveToFirst();
 			int idIndex = 
