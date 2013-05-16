@@ -59,7 +59,7 @@ public class CustomAdapter extends BaseAdapter {
 		Contact contact = _data.get(position);
 		Log.v("GetView", "Got position: " + position);
 		Log.v("GetView", "ContactPhoto: " + contact.contactPhoto);
-		contactPhoto.setImageResource(contact.contactPhoto);
+		contactPhoto.setImageBitmap(contact.contactPhoto);
 		Log.v("GetView", "Loaded Photo");
 		contactName.setText(contact.contactName);
 		Log.v("GetView", "Loaded Name");

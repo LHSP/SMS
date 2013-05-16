@@ -1,5 +1,7 @@
 package com.LHSP.FragmentSMS;
 
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
@@ -10,6 +12,7 @@ import android.content.ContentUris;
 import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -48,6 +51,67 @@ public class Contacts implements LoaderCallbacks<Cursor>{
     public void ContactsLoader()
     {
     	activity.getLoaderManager().initLoader(LIST_ID, null, this);
+    }
+    
+    public static ArrayList<Contact> GetMessageList(Context context)
+    {
+    	ArrayList<Contact> contacts = new ArrayList<Contact>();
+	    ContentResolver cr = context.getContentResolver();
+    	
+    	// Gets the URI of the db
+    	Uri uri = ContactsContract.Contacts.CONTENT_URI;
+    	// What to grab from the db
+    	String[] projection = new String[] {
+    	        ContactsContract.Contacts._ID,
+    	        ContactsContract.Contacts.DISPLAY_NAME,
+    	        ContactsContract.Contacts.PHOTO_THUMBNAIL_URI,
+    	        ContactsContract.Contacts.HAS_PHONE_NUMBER
+    	        };
+    	
+    	String sortOrder = ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
+
+    	Cursor cursor = cr.query(uri, projection, SELECTION, null, sortOrder);
+    	
+    	if(cursor != null)
+    	{
+    		Log.v("Cursor", "Cursor not null");
+    		Contact contact;
+            AssetFileDescriptor afd = null;
+	        FileDescriptor fileDescriptor;
+    		int i = 0;
+    		while(cursor.moveToNext())
+    		{
+        		Log.v("Cursor", "Cursor has " + cursor.getCount() + " results.");
+    			i++;
+    			contact = new Contact();
+    			contact.contactName = cursor.getString(1);
+    			Log.v("Cursor", contact.contactName);
+    			Log.v("Cursor", cursor.getString(2) == null ? "Nada" : cursor.getString(2));
+    			contact.contactPhoto = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
+    			if(cursor.getString(2) != null)
+    			{
+	    			try {
+						afd = cr.openAssetFileDescriptor(Uri.parse(cursor.getString(2)), "r");
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					}
+	    			if(afd != null)
+	    			{
+						fileDescriptor = afd.getFileDescriptor();
+		    			contact.contactPhoto = BitmapFactory.decodeFileDescriptor(fileDescriptor, null, null);
+	    			}
+    			}
+    			
+    			contact.lastMessage = "blablabla";
+    			contact.lastMessageTime = "12:00";
+    			contact.messageCount = i;
+    			contacts.add(contact);
+    		}
+    	}
+    	
+    	cursor.close();
+    	
+    	return contacts;
     }
 	
 	public static ArrayAdapter<String> GetPhoneContacts(Context context)

@@ -54,7 +54,7 @@ public class ContactAdapter extends BaseAdapter {
 		TextView lastMessageTime = (TextView) v.findViewById(R.id.lastMessageTime);
 
 		Contact contact = _data.get(position);
-		contactPhoto.setImageResource(contact.contactPhoto);
+		contactPhoto.setImageBitmap(contact.contactPhoto);
 		contactName.setText(contact.contactName);
 		messageCount.setText(contact.messageCount);
 		lastMessage.setText(contact.lastMessage);

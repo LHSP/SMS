@@ -47,16 +47,24 @@ public class Home extends Activity {
 	 */
 	public void Initialize()
 	{
+		MessageList();
 //		Contacts contacts = new Contacts(this);
 //		contacts.ContactsLoader();
 //		contactList = (ListView) findViewById(R.id.contactList);
 //		contactList.setAdapter(Contacts.GetPhoneContacts(this));
 //		ContactsArrayAdapter();
-		MessageListTest();
+//		MessageListTest();
 //		ContactsArrayAdapter();
 	}
 	
-	
+	public void MessageList()
+	{
+		contactList = (ListView) findViewById(R.id.contactList);
+        
+        contacts = Contacts.GetMessageList(this);
+        
+        contactList.setAdapter(new CustomAdapter(contacts , this));
+	}
 	public void MessageListTest()
 	{
 		contactList = (ListView) findViewById(R.id.contactList);
@@ -69,7 +77,7 @@ public class Home extends Activity {
 		{
 			contact = new Contact();
 			contact.setContactName("Contato" + String.format("%02d", i));
-			contact.setContactPhoto(R.drawable.ic_search);
+			//contact.setContactPhoto(R.drawable.ic_search);
 			contact.setLastMessage("Esta é uma mensagem de teste.");
 			contact.setLastMessageTime("12:" + String.format("%02d", i));
 			contact.setMessageCount(new Random().nextInt(1000));
