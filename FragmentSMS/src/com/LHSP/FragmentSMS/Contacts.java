@@ -39,7 +39,9 @@ public class Contacts implements LoaderCallbacks<Cursor>{
     private static String SELECTION = "((" + 
             ContactsContract.Contacts.DISPLAY_NAME + " NOTNULL) AND (" +
             ContactsContract.Contacts.DISPLAY_NAME + " != '' ) AND (" +
-            ContactsContract.Contacts.HAS_PHONE_NUMBER +" == '1'))";
+            ContactsContract.Contacts.HAS_PHONE_NUMBER + " == '1')" +
+//            " AND (" +ContactsContract.Contacts._ID + " IN (0, 1289))" +
+            		")";
     
     private static String sortOrder = ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
     
@@ -51,6 +53,56 @@ public class Contacts implements LoaderCallbacks<Cursor>{
     public void ContactsLoader()
     {
     	activity.getLoaderManager().initLoader(LIST_ID, null, this);
+    }
+    
+	public static SMSList GetMessages(Context context)
+    {
+    	Log.v("Contacts.GetMessages", "Entrou");
+    	SMSList lstSms = new SMSList();
+    	
+    	SMS objSms = new SMS();
+        Uri message = Uri.parse("content://sms/");
+        ContentResolver cr = context.getContentResolver();
+        
+        Cursor c = cr.query(message, null, null, null, null);
+        Log.v("Contacts.GetMessages", "Abriu cursor");
+        int totalSMS = c.getCount();
+        Log.v("Contacts.GetMessages", "Contou");
+
+        if (c.moveToFirst()) {
+        	for (int j = 0; j < c.getColumnCount(); j++)
+        	{
+        		//Log.v("Cursor Contents", c.getColumnName(j) + " : " + c.getString(j));
+        	}
+            for (int i = 0; i < totalSMS; i++) {
+
+                objSms = new SMS();
+                objSms.setId(c.getString(c.getColumnIndexOrThrow("_id")));
+                objSms.setAddress(c.getString(c.getColumnIndexOrThrow("address")));
+                objSms.setMsg(c.getString(c.getColumnIndexOrThrow("body")));
+                objSms.setReadState(c.getString(c.getColumnIndex("read")));
+                objSms.setTime(Long.parseLong(c.getString(c.getColumnIndexOrThrow("date"))));
+                objSms.setPerson(c.getString(c.getColumnIndex("person")));
+                if (c.getString(c.getColumnIndexOrThrow("type")).contains("1")) {
+                    objSms.setFolderName("inbox");
+                } else {
+                    objSms.setFolderName("sent");
+                }
+                
+                lstSms.add(objSms);
+                c.moveToNext();
+            }
+        }
+        // else {
+        // throw new RuntimeException("You have no SMS");
+        // }
+        c.close();
+        Log.v("wtv", "" + lstSms.size());
+        for(int i = 0; i < (lstSms.size() < 10 ? lstSms.size() : 10); i++)
+        {
+        	Log.v("SMSs", lstSms.get(MESSAGEGETTYPE.SEQUENCE, i).toString());
+        }
+        return lstSms;
     }
     
     public static ArrayList<Contact> GetMessageList(Context context)
@@ -74,19 +126,18 @@ public class Contacts implements LoaderCallbacks<Cursor>{
     	
     	if(cursor != null)
     	{
-    		Log.v("Cursor", "Cursor not null");
     		Contact contact;
             AssetFileDescriptor afd = null;
 	        FileDescriptor fileDescriptor;
     		int i = 0;
+    		Log.v("Cursor", "Cursor has " + cursor.getCount() + " results.");
     		while(cursor.moveToNext())
     		{
-        		Log.v("Cursor", "Cursor has " + cursor.getCount() + " results.");
     			i++;
     			contact = new Contact();
     			contact.contactName = cursor.getString(1);
-    			Log.v("Cursor", contact.contactName);
-    			Log.v("Cursor", cursor.getString(2) == null ? "Nada" : cursor.getString(2));
+//    			Log.v("Cursor", contact.contactName);
+//    			Log.v("Cursor", cursor.getString(2) == null ? "Nada" : cursor.getString(2));
     			contact.contactPhoto = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
     			if(cursor.getString(2) != null)
     			{
@@ -117,30 +168,30 @@ public class Contacts implements LoaderCallbacks<Cursor>{
 	public static ArrayAdapter<String> GetPhoneContacts(Context context)
 	{
 	    ArrayList<String> listItems = new ArrayList<String>();
-	    Log.v("Array adapter", "Created ListItems");
+//	    Log.v("Array adapter", "Created ListItems");
 		ArrayAdapter<String> adapter;
-	    Log.v("Array adapter", "Created Array Adapter");
+//	    Log.v("Array adapter", "Created Array Adapter");
 		SELECTION = "((" + 
 	            ContactsContract.Contacts.DISPLAY_NAME + " NOTNULL) AND (" +
 	            ContactsContract.Contacts.DISPLAY_NAME + " != '' ) AND (" +
 	            ContactsContract.Contacts.HAS_PHONE_NUMBER +" == '1'))";
-	    Log.v("Array adapter", "Set SELECTION");
+//	    Log.v("Array adapter", "Set SELECTION");
 		
 	    ContentResolver cr = context.getContentResolver();
-	    Log.v("Array adapter", "Created ContentResolver");
+//	    Log.v("Array adapter", "Created ContentResolver");
 		Cursor contactList = cr.query(ContactsContract.Contacts.CONTENT_URI, PROJECTION, SELECTION, null, sortOrder);
 
-	    Log.v("Array adapter", "Created Cursor");
+//	    Log.v("Array adapter", "Created Cursor");
     	while(contactList.moveToNext()) {
     		int colId = contactList.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
     		String contactName = contactList.getString(colId);
-        	Log.v("Array adapter", "Found Contact: " + contactName);
+//        	Log.v("Array adapter", "Found Contact: " + contactName);
         	listItems.add(contactName);
 		}
     	adapter = new ArrayAdapter<String>(context,
 	            android.R.layout.simple_list_item_1,
 	            listItems);	
-	    Log.v("Array adapter", "Created adapter object");	
+//	    Log.v("Array adapter", "Created adapter object");	
     	return adapter;
 	}
 

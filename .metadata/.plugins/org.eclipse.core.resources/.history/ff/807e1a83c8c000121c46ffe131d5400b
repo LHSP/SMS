@@ -1,0 +1,33 @@
+package com.LHSP.FragmentSMS;
+
+import java.util.List;
+
+public class SMSList {
+	int personId;
+	List<SMS> messages;
+	
+	public SMSList(){};
+	
+	public SMSList(int personId)
+	{
+		this.personId = personId;
+	}
+	
+	public int getPersonId() {
+		return personId;
+	}
+	public void setPersonId(int personId) {
+		this.personId = personId;
+	}
+	public List<SMS> getMessages() {
+		return messages;
+	}
+	public void setMessages(List<SMS> messages) {
+		this.messages = messages;
+	}
+	
+	public void Add(SMS message)
+	{
+		messages.add(message);
+	}
+}

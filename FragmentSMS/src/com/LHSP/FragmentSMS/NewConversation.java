@@ -10,19 +10,6 @@ import android.view.MenuItem;
 import android.widget.AutoCompleteTextView;
 
 public class NewConversation extends Activity {
-//
-//	String[] androidBooks = 
-//		{
-//		"Hello, Android - Ed Burnette",
-//		"Professional Android 2 App Dev - Reto Meier",
-//		"Unlocking Android - Frank Ableson",
-//		"Android App Development - Blake Meike",
-//		"Pro Android 2 - Dave MacLean",
-//		"Beginning Android 2 - Mark Murphy",
-//		"Android Programming Tutorials - Mark Murphy",
-//		"Android Wireless App Development - Lauren Darcey",
-//		"Pro Android Games - Vladimir Silva",
-//	};
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

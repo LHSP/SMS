@@ -1,0 +1,25 @@
+package com.LHSP.FragmentSMS;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class SMSList extends ArrayList<SMS> {
+	private static final long serialVersionUID = 4547667736482046371L;
+	List<Tuple<Integer, List<SMS>>> smsByPerson = new ArrayList<Tuple<Integer,List<SMS>>>();
+	
+	public boolean add(SMS sms)
+	{
+		int personId = sms.getPerson();
+		for (Tuple<Integer, List<SMS>> tuple : smsByPerson) {
+			if(tuple.x == personId)
+				tuple.y.add(sms);
+			else
+			{
+				List<SMS> newSMSList = new ArrayList<SMS>();
+				newSMSList.add(sms);
+				smsByPerson.add(new Tuple<Integer, List<SMS>>(personId, newSMSList));
+			}
+		}
+		return true;
+	}
+}
