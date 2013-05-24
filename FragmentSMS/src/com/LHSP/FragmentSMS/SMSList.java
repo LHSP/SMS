@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SMSList {
-	List<Tuple<Integer, ArrayList<SMS>>> smsByPerson = new ArrayList<Tuple<Integer, ArrayList<SMS>>>();
+	List<Tuple<String, ArrayList<SMS>>> smsByPerson = new ArrayList<Tuple<String, ArrayList<SMS>>>();
 
 	public boolean add(SMS sms)
 	{
-		int phone = Integer.parseInt(sms.getAddress());
-		Tuple<Integer, ArrayList<SMS>> t = null;
-		for (Tuple<Integer, ArrayList<SMS>> tuple : smsByPerson) {
-			if(tuple.x == phone)
+		String phone = sms.getAddress();
+		Tuple<String, ArrayList<SMS>> t = null;
+		for (Tuple<String, ArrayList<SMS>> tuple : smsByPerson) {
+			if(phone.equals(tuple.x))
 			{
 				t = tuple;
 				break;
@@ -23,7 +23,7 @@ public class SMSList {
 		{
 			ArrayList<SMS> newSMSList = new ArrayList<SMS>();
 			newSMSList.add(sms);
-			smsByPerson.add(new Tuple<Integer, ArrayList<SMS>>(phone, newSMSList));
+			smsByPerson.add(new Tuple<String, ArrayList<SMS>>(phone, newSMSList));
 		}
 		return true;
 	}
@@ -33,22 +33,21 @@ public class SMSList {
 		return smsByPerson.size();
 	}
 
-	public ArrayList<SMS> get(MESSAGEGETTYPE getType, int phone)
+	public ArrayList<SMS> get(int id)
 	{
-		switch (getType) {
-		case SEQUENCE:
-			return smsByPerson.get(phone).y;
-
-		case PHONE:
-			for (Tuple<Integer, ArrayList<SMS>> tuple : smsByPerson) {
-				if(tuple.x == phone)
-					return tuple.y;
+		return smsByPerson.get(id).y;
+	}
+	
+	public ArrayList<SMS> get(String phone)
+	{
+		ArrayList<SMS> smsList = null;
+		for (Tuple<String, ArrayList<SMS>> tuple : smsByPerson) {
+			if(phone.equals(tuple.x))
+			{
+				smsList = new ArrayList<SMS>(tuple.y);
+				return smsList;
 			}
-			return null;
-
-		default:
-			return null;
 		}
-
+		return smsList;
 	}
 }

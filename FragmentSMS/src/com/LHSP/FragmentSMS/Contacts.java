@@ -72,7 +72,7 @@ public class Contacts implements LoaderCallbacks<Cursor>{
         if (c.moveToFirst()) {
         	for (int j = 0; j < c.getColumnCount(); j++)
         	{
-        		//Log.v("Cursor Contents", c.getColumnName(j) + " : " + c.getString(j));
+        		Log.v("Cursor Contents", c.getColumnName(j) + " : " + c.getString(j));
         	}
             for (int i = 0; i < totalSMS; i++) {
 
@@ -100,7 +100,7 @@ public class Contacts implements LoaderCallbacks<Cursor>{
         Log.v("wtv", "" + lstSms.size());
         for(int i = 0; i < (lstSms.size() < 10 ? lstSms.size() : 10); i++)
         {
-        	Log.v("SMSs", lstSms.get(MESSAGEGETTYPE.SEQUENCE, i).toString());
+        	Log.v("SMSs", lstSms.get(i).toString());
         }
         return lstSms;
     }
