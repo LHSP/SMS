@@ -2,7 +2,9 @@ package com.LHSP.FragmentSMS;
 
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import android.content.ContentResolver;
 import android.content.Context;
@@ -11,7 +13,6 @@ import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.ContactsContract;
-import android.provider.ContactsContract.PhoneLookup;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
@@ -21,6 +22,7 @@ public class Contacts{
     private static String[] PROJECTION = new String[] {
     	ContactsContract.Contacts._ID,
     	ContactsContract.Contacts.DISPLAY_NAME,
+        ContactsContract.Contacts.PHOTO_THUMBNAIL_URI,
     	ContactsContract.Contacts.HAS_PHONE_NUMBER
     	};
 
@@ -169,24 +171,51 @@ public class Contacts{
     	ArrayList<Contact> contacts = new ArrayList<Contact>();
 	    ContentResolver cr = context.getContentResolver();    	
     	
-    	Uri personUri = Uri.withAppendedPath( ContactsContract.PhoneLookup.CONTENT_FILTER_URI, "('985955966', '011989357580')");  
+	    Uri personUri = null;
+	    Cursor cursor = null;
+		Contact contact = null;
+	    
+		SMSList SMSs = GetMessages(context);
+	    
+	    for(int i = 0; i < SMSs.size(); i++)
+	    {
+	    	Tuple<String, ArrayList<SMS>> smsContact = SMSs.getSMSContact(i);
+	    	personUri = Uri.withAppendedPath( ContactsContract.PhoneLookup.CONTENT_FILTER_URI, smsContact.x);  
 
-    	Cursor cursor = cr.query(personUri, new String[] { PhoneLookup.DISPLAY_NAME }, null, null, null ); 
-    	
-    	int totalPeople = cursor.getCount();
-    	
-    	Log.v("Cursor count", "" + totalPeople);
+	    	cursor = cr.query(personUri, PROJECTION, null, null, null ); 	    	
 
-    	if( cursor.moveToFirst() ) {  
-    		for(int i = 0; i< totalPeople; i++)
-    		{
-    	             int nameIndex = cursor.getColumnIndex(PhoneLookup.DISPLAY_NAME);  
-
-    	             Log.v("Nome", cursor.getString(nameIndex));
-    		}
-    	}
-    	cursor.close();
-    	
+	    	if( cursor.moveToFirst() ) {  
+	            AssetFileDescriptor afd = null;
+		        FileDescriptor fileDescriptor;
+    			contact = new Contact();
+    			contact.contactName = cursor.getString(1);
+//    			Log.v("Cursor", contact.contactName);
+//    			Log.v("Cursor", cursor.getString(2) == null ? "Nada" : cursor.getString(2));
+    			contact.contactPhoto = BitmapFactory.decodeResource(context.getResources(), android.R.drawable.sym_contact_card);
+    			if(cursor.getString(2) != null)
+    			{
+	    			try {
+						afd = cr.openAssetFileDescriptor(Uri.parse(cursor.getString(2)), "r");
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					}
+	    			if(afd != null)
+	    			{
+						fileDescriptor = afd.getFileDescriptor();
+		    			contact.contactPhoto = BitmapFactory.decodeFileDescriptor(fileDescriptor, null, null);
+	    			}
+    			}
+    			
+    			SMS lastMessage = smsContact.y.get(0);
+    			
+    			contact.lastMessage = lastMessage.getMsg(30).trim() + "...";
+    			contact.lastMessageTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(lastMessage.getTime());
+    			contact.messageCount = smsContact.y.size();
+    			contacts.add(contact);
+	    	}
+	    	cursor.close();
+	    }
+	    
     	return contacts;
     }
 	

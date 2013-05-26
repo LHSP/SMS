@@ -191,7 +191,7 @@ public class Contacts{
     			contact.contactName = cursor.getString(1);
 //    			Log.v("Cursor", contact.contactName);
 //    			Log.v("Cursor", cursor.getString(2) == null ? "Nada" : cursor.getString(2));
-    			contact.contactPhoto = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
+    			contact.contactPhoto = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_contact_photo);
     			if(cursor.getString(2) != null)
     			{
 	    			try {

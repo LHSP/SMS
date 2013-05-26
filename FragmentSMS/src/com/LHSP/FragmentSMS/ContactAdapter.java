@@ -3,8 +3,10 @@ package com.LHSP.FragmentSMS;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.QuickContactBadge;
@@ -47,7 +49,7 @@ public class ContactAdapter extends BaseAdapter {
 			v = vi.inflate(R.layout.list_item_contact, null);
 		}
 //		Log.v("GetView", "Inflated");
-
+		
 		QuickContactBadge contactPhoto = (QuickContactBadge) v.findViewById(R.id.contactPhoto);
 		TextView contactName = (TextView) v.findViewById(R.id.contactName);
 		TextView messageCount = (TextView) v.findViewById(R.id.messageCount);
@@ -69,6 +71,14 @@ public class ContactAdapter extends BaseAdapter {
 		lastMessageTime.setText(contact.lastMessageTime);
 //		Log.v("GetView", "Loaded Last Message Time");
 //		Log.v("GetView", "Filled Views");
+		
+		v.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Log.v("ClickListener", contactName);
+			}
+		});
 
 		return v;
 	}
