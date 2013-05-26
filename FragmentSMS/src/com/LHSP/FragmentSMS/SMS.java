@@ -61,6 +61,13 @@ public class SMS{
 			_person = Integer.parseInt(person);
 	}
 	
+	public String getMsg(int size){
+		if(_msg.length() < size)
+			return _msg.substring(0, _msg.length());
+		else
+			return _msg.substring(0, size);
+	}
+	
 	public String toString()
 	{
 		StringBuilder sb = new StringBuilder();

@@ -2,58 +2,40 @@ package com.LHSP.FragmentSMS;
 
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
-import android.app.Activity;
-import android.app.LoaderManager.LoaderCallbacks;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
-import android.content.CursorLoader;
-import android.content.Loader;
 import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.ArrayAdapter;
-import android.widget.TextView;
 
-public class Contacts implements LoaderCallbacks<Cursor>{	
-	
-	private static final int LIST_ID = 0;
-	private Activity activity;
-	private static Uri uri = ContactsContract.Contacts.CONTENT_URI;
-	
+public class Contacts{	
+		
 	// These are the Contacts rows that we will retrieve
-    private static String[] PROJECTION = new String[] {ContactsContract.Contacts._ID,
-            ContactsContract.Contacts.DISPLAY_NAME, ContactsContract.Contacts.HAS_PHONE_NUMBER};
+    private static String[] PROJECTION = new String[] {
+    	ContactsContract.Contacts._ID,
+    	ContactsContract.Contacts.DISPLAY_NAME,
+        ContactsContract.Contacts.PHOTO_THUMBNAIL_URI,
+    	ContactsContract.Contacts.HAS_PHONE_NUMBER
+    	};
 
     // This is the select criteria
     private static String SELECTION = "((" + 
             ContactsContract.Contacts.DISPLAY_NAME + " NOTNULL) AND (" +
             ContactsContract.Contacts.DISPLAY_NAME + " != '' ) AND (" +
             ContactsContract.Contacts.HAS_PHONE_NUMBER + " == '1')" +
-//            " AND (" +ContactsContract.Contacts._ID + " IN (0, 1289))" +
+            " AND ( " + ContactsContract.PhoneLookup.NUMBER + " IN ({0}))" +
+//            " AND ( name_raw_contact_id IN ({0}))" +
             		")";
     
     private static String sortOrder = ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
-    
-    public Contacts(Activity activity)
-    {
-    	this.activity = activity;
-    }
-    
-    public void ContactsLoader()
-    {
-    	activity.getLoaderManager().initLoader(LIST_ID, null, this);
-    }
     
 	public static SMSList GetMessages(Context context)
     {
@@ -97,11 +79,11 @@ public class Contacts implements LoaderCallbacks<Cursor>{
         // throw new RuntimeException("You have no SMS");
         // }
         c.close();
-        Log.v("wtv", "" + lstSms.size());
-        for(int i = 0; i < (lstSms.size() < 10 ? lstSms.size() : 10); i++)
-        {
-        	Log.v("SMSs", lstSms.get(i).toString());
-        }
+//        Log.v("wtv", "" + lstSms.size());
+//        for(int i = 0; i < (lstSms.size() < 10 ? lstSms.size() : 10); i++)
+//        {
+//        	Log.v("SMSs", lstSms.get(i).toString());
+//        }
         return lstSms;
     }
     
@@ -119,10 +101,29 @@ public class Contacts implements LoaderCallbacks<Cursor>{
     	        ContactsContract.Contacts.PHOTO_THUMBNAIL_URI,
     	        ContactsContract.Contacts.HAS_PHONE_NUMBER
     	        };
+
+        SMSList SMSs = Contacts.GetMessages(context);
+        StringBuilder contactsIds = new StringBuilder();
+        ArrayList<String> ids = SMSs.getMessagedContacts();
+        int totalIds = ids.size();
+        Boolean prependComma = false;
+        for (int j = 0; j < totalIds; j++) {
+        	if(prependComma)
+				contactsIds.append(", ");
+			else
+				prependComma = true;
+			
+        	contactsIds.append("'");
+        	contactsIds.append(ids.get(j));
+        	contactsIds.append("'");
+		}
+    	String selection = SELECTION.replace("{0}", contactsIds);
+    	
+    	Log.v("Selection", selection);
     	
     	String sortOrder = ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC";
 
-    	Cursor cursor = cr.query(uri, projection, SELECTION, null, sortOrder);
+    	Cursor cursor = cr.query(uri, projection, selection, null, sortOrder);
     	
     	if(cursor != null)
     	{
@@ -164,6 +165,59 @@ public class Contacts implements LoaderCallbacks<Cursor>{
     	
     	return contacts;
     }
+    
+    public static ArrayList<Contact> GetNewMessageList(Context context)
+    {
+    	ArrayList<Contact> contacts = new ArrayList<Contact>();
+	    ContentResolver cr = context.getContentResolver();    	
+    	
+	    Uri personUri = null;
+	    Cursor cursor = null;
+		Contact contact = null;
+	    
+		SMSList SMSs = GetMessages(context);
+	    
+	    for(int i = 0; i < SMSs.size(); i++)
+	    {
+	    	Tuple<String, ArrayList<SMS>> smsContact = SMSs.getSMSContact(i);
+	    	personUri = Uri.withAppendedPath( ContactsContract.PhoneLookup.CONTENT_FILTER_URI, smsContact.x);  
+
+	    	cursor = cr.query(personUri, PROJECTION, null, null, null ); 	    	
+
+	    	if( cursor.moveToFirst() ) {  
+	            AssetFileDescriptor afd = null;
+		        FileDescriptor fileDescriptor;
+    			contact = new Contact();
+    			contact.contactName = cursor.getString(1);
+//    			Log.v("Cursor", contact.contactName);
+//    			Log.v("Cursor", cursor.getString(2) == null ? "Nada" : cursor.getString(2));
+    			contact.contactPhoto = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
+    			if(cursor.getString(2) != null)
+    			{
+	    			try {
+						afd = cr.openAssetFileDescriptor(Uri.parse(cursor.getString(2)), "r");
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					}
+	    			if(afd != null)
+	    			{
+						fileDescriptor = afd.getFileDescriptor();
+		    			contact.contactPhoto = BitmapFactory.decodeFileDescriptor(fileDescriptor, null, null);
+	    			}
+    			}
+    			
+    			SMS lastMessage = smsContact.y.get(0);
+    			
+    			contact.lastMessage = lastMessage.getMsg(30).trim() + "...";
+    			contact.lastMessageTime = new SimpleDateFormat("HH:mm", Locale.getDefault()).format(lastMessage.getTime());
+    			contact.messageCount = smsContact.y.size();
+    			contacts.add(contact);
+	    	}
+	    	cursor.close();
+	    }
+	    
+    	return contacts;
+    }
 	
 	public static ArrayAdapter<String> GetPhoneContacts(Context context)
 	{
@@ -193,47 +247,5 @@ public class Contacts implements LoaderCallbacks<Cursor>{
 	            listItems);	
 //	    Log.v("Array adapter", "Created adapter object");	
     	return adapter;
-	}
-
-	@Override
-	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-		CursorLoader loader = new CursorLoader(
-				activity,
-				uri,
-				null,
-				null,
-				null,
-				null);
-		return loader;
-	}
-
-	@Override
-	public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-		Bitmap contactPhoto;
-		TextView textView = (TextView) activity.findViewById(R.id.textMessage);//new TextView(activity);
-		if (cursor != null && cursor.getCount() > 0) {
-			cursor.moveToFirst();
-			int idIndex = 
-			      cursor.getColumnIndex(ContactsContract.Contacts._ID);
-			int nameIndex = 
-			      cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
-			int id = cursor.getInt(idIndex);
-			String name = cursor.getString(nameIndex);
-			Uri uri = ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI, id);
-			InputStream input = ContactsContract.Contacts.openContactPhotoInputStream(activity.getContentResolver(), uri);
-			textView.setText(name);
-			if (input != null) 
-			{
-				contactPhoto = BitmapFactory.decodeStream(input);
-				textView.setCompoundDrawablesWithIntrinsicBounds(new BitmapDrawable(activity.getResources(), contactPhoto), null, null, null);
-				textView.draw(new Canvas(contactPhoto));
-			}
-	   }		
-	}
-
-	@Override
-	public void onLoaderReset(Loader<Cursor> arg0) {
-		// TODO Auto-generated method stub
-		
 	}
 }

@@ -32,6 +32,11 @@ public class SMSList {
 	{
 		return smsByPerson.size();
 	}
+	
+	public Tuple<String, ArrayList<SMS>> getSMSContact(int i)
+	{
+		return smsByPerson.get(i);
+	}
 
 	public ArrayList<SMS> get(int id)
 	{
@@ -49,5 +54,13 @@ public class SMSList {
 			}
 		}
 		return smsList;
+	}
+
+	public ArrayList<String> getMessagedContacts() {
+		ArrayList<String> ids = new ArrayList<String>();
+		for (Tuple<String, ArrayList<SMS>> contactMessages : smsByPerson) {
+			ids.add(contactMessages.x);
+		}
+		return ids;
 	}
 }
