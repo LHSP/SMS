@@ -5,9 +5,13 @@ import android.app.Activity;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.telephony.SmsManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 
 public class NewConversation extends Activity {
 	
@@ -17,6 +21,16 @@ public class NewConversation extends Activity {
 		setContentView(R.layout.activity_new_conversation);
 		// Show the Up button in the action bar.
 		setupActionBar();
+		
+		Button sendSms = (Button) findViewById(R.id.buttonSend);
+		sendSms.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {SmsManager sms = SmsManager.getDefault();
+		       sms.sendTextMessage("984529768", null, "Funciona!", null, null);
+				
+			}
+		});
 		
 //		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, androidBooks);
 		AutoCompleteTextView acTextView = (AutoCompleteTextView) findViewById(R.id.textTo);

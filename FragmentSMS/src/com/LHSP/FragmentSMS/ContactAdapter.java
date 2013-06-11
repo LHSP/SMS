@@ -57,7 +57,7 @@ public class ContactAdapter extends BaseAdapter {
 		TextView lastMessageTime = (TextView) v.findViewById(R.id.lastMessageTime);
 //		Log.v("GetView", "Got Views");
 
-		Contact contact = _data.get(position);
+		final Contact contact = _data.get(position);
 //		Log.v("GetView", "Got position: " + position);
 //		Log.v("GetView", "ContactPhoto: " + contact.contactPhoto);
 		contactPhoto.setImageBitmap(contact.contactPhoto);
@@ -76,7 +76,7 @@ public class ContactAdapter extends BaseAdapter {
 			
 			@Override
 			public void onClick(View v) {
-				Log.v("ClickListener", contactName);
+				Log.v("ClickListener", contact.contactName);
 			}
 		});
 

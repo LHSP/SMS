@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <qualifiedTypeNameHistroy>
-<fullyQualifiedTypeName name="android.app.LoaderManager"/>
-<fullyQualifiedTypeName name="android.widget.LinearLayout.LayoutParams"/>
 <fullyQualifiedTypeName name="android.content.CursorLoader"/>
 <fullyQualifiedTypeName name="com.LHSP.sms.ContactListLoader"/>
 <fullyQualifiedTypeName name="android.R.layout"/>
@@ -25,7 +23,6 @@
 <fullyQualifiedTypeName name="android.provider.ContactsContract.Contacts.Photo"/>
 <fullyQualifiedTypeName name="android.graphics.drawable.BitmapDrawable"/>
 <fullyQualifiedTypeName name="android.graphics.BitmapFactory"/>
-<fullyQualifiedTypeName name="com.LHSP.FragmentSMS.R.id"/>
 <fullyQualifiedTypeName name="android.R.id"/>
 <fullyQualifiedTypeName name="com.LHSP.FragmentSMS.SMS"/>
 <fullyQualifiedTypeName name="android.text.format.Time"/>
@@ -53,11 +50,14 @@
 <fullyQualifiedTypeName name="java.util.Calendar"/>
 <fullyQualifiedTypeName name="java.util.GregorianCalendar"/>
 <fullyQualifiedTypeName name="java.util.Locale"/>
-<fullyQualifiedTypeName name="android.R"/>
 <fullyQualifiedTypeName name="android.R.drawable"/>
 <fullyQualifiedTypeName name="com.LHSP.FragmentSMS.ContactAdapter"/>
 <fullyQualifiedTypeName name="android.view.View"/>
 <fullyQualifiedTypeName name="android.util.Log"/>
-<fullyQualifiedTypeName name="android.view.View.OnClickListener"/>
 <fullyQualifiedTypeName name="com.LHSP.FragmentSMS.Contact"/>
+<fullyQualifiedTypeName name="android.telephony.SmsManager"/>
+<fullyQualifiedTypeName name="android.R"/>
+<fullyQualifiedTypeName name="com.LHSP.FragmentSMS.R.id"/>
+<fullyQualifiedTypeName name="android.widget.Button"/>
+<fullyQualifiedTypeName name="android.view.View.OnClickListener"/>
 </qualifiedTypeNameHistroy>
