@@ -50,10 +50,8 @@ public class Home extends Activity {
 	
 	public void MessageList()
 	{
-		contactList = (ListView) findViewById(R.id.contactList);
-        
-        contacts = Contacts.GetNewMessageList(this);
-        
+		contactList = (ListView) findViewById(R.id.contactList);        
+        contacts = Contacts.GetNewMessageList(this);        
         contactList.setAdapter(new ContactAdapter(contacts , this));
 	}
 }

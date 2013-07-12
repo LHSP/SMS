@@ -6,12 +6,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.telephony.SmsManager;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class NewConversation extends Activity {
 	
@@ -22,20 +24,30 @@ public class NewConversation extends Activity {
 		// Show the Up button in the action bar.
 		setupActionBar();
 		
+		final TextView messageText = (TextView) findViewById(R.id.messageText);
+		messageText.setMovementMethod(new ScrollingMovementMethod());
+		
+//		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, androidBooks);
+		final AutoCompleteTextView acTextView = (AutoCompleteTextView) findViewById(R.id.textTo);
+		acTextView.setThreshold(2);
+		acTextView.setAdapter(Contacts.GetPhoneContacts(this));
+		
 		Button sendSms = (Button) findViewById(R.id.buttonSend);
 		sendSms.setOnClickListener(new OnClickListener() {
 			
 			@Override
-			public void onClick(View arg0) {SmsManager sms = SmsManager.getDefault();
-		       sms.sendTextMessage("984529768", null, "Funciona!", null, null);
+			public void onClick(View arg0) {
+				SmsManager sms = SmsManager.getDefault();
+				String message = messageText.getText().toString();
+				String address = acTextView.getText().toString();
+				if(message != null && !message.isEmpty() && address != null && !address.isEmpty())
+				{
+					sms.sendTextMessage(address, null, message, null, null);
+					// Redirect to view with conversation with the referred address
+				}
 				
 			}
 		});
-		
-//		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, androidBooks);
-		AutoCompleteTextView acTextView = (AutoCompleteTextView) findViewById(R.id.textTo);
-		acTextView.setThreshold(2);
-		acTextView.setAdapter(Contacts.GetPhoneContacts(this));
 	}
 
 	/**
